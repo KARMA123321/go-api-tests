@@ -1,1 +1,1 @@
-# go_api_tests
+# go-api-tests
