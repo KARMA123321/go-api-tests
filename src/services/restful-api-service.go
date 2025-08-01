@@ -8,23 +8,31 @@ import (
 )
 
 type RestfulApiService struct {
-	client *clients.RestfulApiClient
+	Client *clients.RestfulApiClient
 }
 
 func (s *RestfulApiService) Initialize() {
-	s.client = &clients.RestfulApiClient{}
+	s.Client = &clients.RestfulApiClient{}
 
-	s.client.Initialize()
+	s.Client.Initialize()
 }
 
 func (s *RestfulApiService) GetObjects(t *provider.T) (*resty.Response, []*restfulapistructs.Object) {
-	response := s.client.GetObjects(t)
+	response := s.Client.GetObjects(t)
+
+	if response.IsError() {
+		(*t).Fatalf("Failed to get objects: %v", response.Error())
+	}
 
 	return response, response.Result().([]*restfulapistructs.Object)
 }
 
 func (s *RestfulApiService) GetObjectById(t *provider.T, objectId string) (*resty.Response, *restfulapistructs.Object) {
-	response := s.client.GetObjectById(t, objectId)
+	response := s.Client.GetObjectById(t, objectId)
+
+	if response.IsError() {
+		(*t).Fatalf("Failed to get object with ID '%s': %v", objectId, response.Error())
+	}
 
 	return response, response.Result().(*restfulapistructs.Object)
 }

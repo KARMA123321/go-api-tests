@@ -40,13 +40,12 @@ func (c *RestfulApiClient) GetObjectById(t *provider.T, objectId string) *resty.
 	(*t).WithNewStep("Make a GET request to /object/{id}", func(sCtx provider.StepCtx) {
 		res, err := c.req.SetResult(&restfulapistructs.Object{}).Get(fmt.Sprintf("/objects/%s", objectId))
 
-		if err != nil {
-			(*t).Fatalf("Failed to make GET request: %v", err)
-		}
+	if err != nil {
+		(*t).Fatalf("Failed to make GET request: %v", err)
+	}
 
 		result = res
 	})
 
 	return result
-
 }
