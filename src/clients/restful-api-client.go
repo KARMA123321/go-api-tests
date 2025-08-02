@@ -37,12 +37,28 @@ func (c *RestfulApiClient) GetObjects(t *provider.T) *resty.Response {
 func (c *RestfulApiClient) GetObjectById(t *provider.T, objectId string) *resty.Response {
 	var result *resty.Response
 
-	(*t).WithNewStep("Make a GET request to /object/{id}", func(sCtx provider.StepCtx) {
+	(*t).WithNewStep(fmt.Sprintf("Make a GET request to /object/%s", objectId), func(sCtx provider.StepCtx) {
 		res, err := c.req.SetResult(&restfulapistructs.Object{}).Get(fmt.Sprintf("/objects/%s", objectId))
 
 	if err != nil {
 		(*t).Fatalf("Failed to make GET request: %v", err)
 	}
+
+		result = res
+	})
+
+	return result
+}
+
+func (c *RestfulApiClient) CreateObject(t *provider.T, object restfulapistructs.CreateObjectRequestBody) *resty.Response {
+	var result *resty.Response
+
+	(*t).WithNewStep("Make a POST request to /objects", func(sCtx provider.StepCtx) {
+		res, err := c.req.SetBody(object).SetResult(&restfulapistructs.CreateObjectResponseBody{}).Post("/objects")
+
+		if err != nil {
+			(*t).Fatalf("Failed to make POST request: %v", err)
+		}
 
 		result = res
 	})

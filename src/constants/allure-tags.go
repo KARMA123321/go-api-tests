@@ -6,4 +6,5 @@ const (
 
 	TagGetObjectsMethod    = "GetObjects"
 	TagGetObjectByIdMethod = "GetObjectById"
+	TagCreateObjectMethod	= "CreateObject"
 )

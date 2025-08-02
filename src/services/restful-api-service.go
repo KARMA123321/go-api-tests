@@ -36,3 +36,13 @@ func (s *RestfulApiService) GetObjectById(t *provider.T, objectId string) (*rest
 
 	return response, response.Result().(*restfulapistructs.Object)
 }
+
+func (s *RestfulApiService) CreateObject(t *provider.T, obj restfulapistructs.CreateObjectRequestBody) (*resty.Response, *restfulapistructs.CreateObjectResponseBody) {
+	response := s.Client.CreateObject(t, obj)
+
+	if response.IsError() {
+		(*t).Fatalf("Failed to create object: %v", response.Error())
+	}
+
+	return response, response.Result().(*restfulapistructs.CreateObjectResponseBody)
+}
