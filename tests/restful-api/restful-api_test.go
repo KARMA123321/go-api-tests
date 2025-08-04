@@ -113,7 +113,7 @@ func (s *RestfulApiSuite) TestCreateObject(t provider.T) {
 func (s *RestfulApiSuite) TableTestGetNonExistentObject(t provider.T, objectId string) {
 	t.Titlef("GET /object/%s returns the 404 error because of non-existent object", objectId)
 	t.Tags(constants.TagNegative, constants.TagGetObjectByIdMethod)
-	t.Severity(allure.MINOR)
+	t.Severity(allure.NORMAL)
 
 	expectedError := fmt.Sprintf("{\"error\":\"Oject with id=%s was not found.\"}", objectId)
 

@@ -13,7 +13,7 @@ type IAllureContext interface {
 }
 
 func AttachRequestDataToReport(ctx IAllureContext, response *resty.Response) error {
-	reqAttachment := common.Request{
+	reqAttachment := &common.Request{
 		Url:     response.Request.URL,
 		Method:  response.Request.Method,
 		Headers: response.Request.Header,
@@ -26,7 +26,7 @@ func AttachRequestDataToReport(ctx IAllureContext, response *resty.Response) err
 		ctx.WithNewAttachment("Request:", allure.JSON, reqAttachmentJson)
 	}
 
-	resAttachment := common.Response{
+	resAttachment := &common.Response{
 		StatusCode: response.StatusCode(),
 		Status:     response.Status(),
 		Headers:    response.Header(),
