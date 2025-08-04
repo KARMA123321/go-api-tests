@@ -53,8 +53,10 @@ func (s *RestfulApiSuite) TestGetObjects(t provider.T) {
 
 	response, list := s.service.GetObjects(&t)
 
-	t.Assert().Equal(200, response.StatusCode())
-	t.Assert().Equal(13, len(list))
+	t.WithNewStep("Verify the response of getting all objects", func(sCtx provider.StepCtx) {
+		sCtx.Require().Equal(200, response.StatusCode())
+		sCtx.Assert().Equal(13, len(list))
+	})
 }
 
 func (s *RestfulApiSuite) TableTestGetObjectById(t provider.T, expected *restfulapistructs.Object) {
@@ -64,13 +66,15 @@ func (s *RestfulApiSuite) TableTestGetObjectById(t provider.T, expected *restful
 
 	response, actual := s.service.GetObjectById(&t, expected.Id)
 
-	t.Assert().Equal(200, response.StatusCode())
-	t.Assert().Equal(*expected, *actual, "Objects should be equal")
+	t.WithNewStep("Verify the response of getting object by id", func(sCtx provider.StepCtx) {
+		sCtx.Require().Equal(200, response.StatusCode())
+		sCtx.Assert().Equal(*expected, *actual, "Objects should be equal")
+	})
 }
 
 func (s *RestfulApiSuite) TestCreateObject(t provider.T) {
-	t.Skip("Skipped because response's Id field is not a valid integer and CreatedAt field is not a valid time")
-	t.Title("POST /object/%s creates a new object with provided data")
+	t.Skip("Skipped because the response's Id field is not a valid integer and CreatedAt field is not a valid time")
+	t.Title("POST /object creates a new object with provided data")
 	t.Tags(constants.TagPositive, constants.TagCreateObjectMethod)
 	t.Severity(allure.CRITICAL)
 
@@ -94,12 +98,14 @@ func (s *RestfulApiSuite) TestCreateObject(t provider.T) {
 	response, body := s.service.CreateObject(&t, newObject)
 	_, err := strconv.Atoi(body.Id)
 
-	// We could consider 200 as a wrong status code here, but we won't
-	t.Assert().Equal(200, response.StatusCode())
-	t.Assert().NoError(err, "Id should be a valid integer")
-	t.Assert().Equal(newObject.Name, body.Name)
-	t.Assert().Equal(newObject.Data, body.Data)
-	t.Assert().Regexp(constants.TimeRegexp, body.CreatedAt)
+	t.WithNewStep("Verify the object creation response", func(sCtx provider.StepCtx) {
+		// We could consider 200 as a wrong status code here, but we won't
+		sCtx.Require().Equal(200, response.StatusCode(), "Request should be successful")
+		sCtx.Assert().NoError(err, "Id should be a valid integer")
+		sCtx.Assert().Equal(newObject.Name, body.Name, "Object name should match the request")
+		sCtx.Assert().Equal(newObject.Data, body.Data, "Object data should match the request")
+		sCtx.Assert().Regexp(constants.TimeRegexp, body.CreatedAt, "CreatedAt should be a valid time format")
+	})
 }
 
 // Negative tests
@@ -113,8 +119,10 @@ func (s *RestfulApiSuite) TableTestGetNonExistentObject(t provider.T, objectId s
 
 	response := s.service.Client.GetObjectById(&t, objectId)
 
-	t.Assert().Equal(404, response.StatusCode())
-	t.Require().Equal(expectedError, response.String())
+	t.WithNewStep("Verify the response of getting object by id", func(sCtx provider.StepCtx) {
+		sCtx.Require().Equal(404, response.StatusCode())
+		sCtx.Require().Equal(expectedError, response.String())
+	})
 }
 
 func TestSuiteRunner(t *testing.T) {

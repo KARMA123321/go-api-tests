@@ -3,6 +3,7 @@ package clients
 import (
 	"fmt"
 
+	"github.com/karma123321/go-api-tests/src/helpers"
 	restfulapistructs "github.com/karma123321/go-api-tests/src/structs/restful-api-structs"
 	"github.com/ozontech/allure-go/pkg/framework/provider"
 	"resty.dev/v3"
@@ -28,6 +29,10 @@ func (c *RestfulApiClient) GetObjects(t *provider.T) *resty.Response {
 			(*t).Fatalf("Failed to make GET request: %v", err)
 		}
 
+		if err := helpers.AttachRequestDataToReport(sCtx, res); err != nil {
+			(*t).Fatalf("Failed to attach request data to report: %v", err)
+		}
+
 		result = res
 	})
 
@@ -40,9 +45,13 @@ func (c *RestfulApiClient) GetObjectById(t *provider.T, objectId string) *resty.
 	(*t).WithNewStep(fmt.Sprintf("Make a GET request to /object/%s", objectId), func(sCtx provider.StepCtx) {
 		res, err := c.req.SetResult(&restfulapistructs.Object{}).Get(fmt.Sprintf("/objects/%s", objectId))
 
-	if err != nil {
-		(*t).Fatalf("Failed to make GET request: %v", err)
-	}
+		if err != nil {
+			(*t).Fatalf("Failed to make GET request: %v", err)
+		}
+
+		if err := helpers.AttachRequestDataToReport(sCtx, res); err != nil {
+			(*t).Fatalf("Failed to attach request data to report: %v", err)
+		}
 
 		result = res
 	})
@@ -60,6 +69,10 @@ func (c *RestfulApiClient) CreateObject(t *provider.T, object restfulapistructs.
 			(*t).Fatalf("Failed to make POST request: %v", err)
 		}
 
+		if err := helpers.AttachRequestDataToReport(sCtx, res); err != nil {
+			(*t).Fatalf("Failed to attach request data to report: %v", err)
+		}
+		
 		result = res
 	})
 
